@@ -319,8 +319,8 @@ def stream(stream):
         #yield
         return
     #src_prev_stream = current_stream()
-    src_prev_stream = torch.cuda_getCurrentStream(0)
-    print("Src prev Stream:",torch.cuda_getCurrentStream(0))
+    src_prev_stream = torch.cuda.getCurrentStream(0)
+    #print("Src prev Stream:",torch.cuda_getCurrentStream(0))
     #if src_prev_stream.device != stream.device:
         # The given stream is on a different device; have to restore the
         # current_stream on that device on exit as well

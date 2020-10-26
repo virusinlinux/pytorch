@@ -453,7 +453,7 @@ RegisterOperators reg({
         "aten::set_grad_enabled(bool val) -> ()",
         [](Stack* stack) { torch::GradMode::set_enabled(pop(stack).toBool()); },
         aliasAnalysisConservative()),
-
+    /*
     Operator(
         "aten::cuda_getCurrentStream(int64_t val) -> __torch__.torch.classes.cuda.Stream",
         [](Stack* stack) {
@@ -465,7 +465,7 @@ RegisterOperators reg({
           // push(stack, v.toCustomClass<torch::jit::CUDAStream>());
           push(stack, v);
         },
-        aliasAnalysisFromSchema()),
+        aliasAnalysisFromSchema()),*/
 });
 } // namespace
 } // namespace jit

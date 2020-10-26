@@ -130,6 +130,9 @@ c10::optional<Value*> tryInsertConstant(
   } else if (val.isEnum()) {
     n->ival_(attr::value, val);
     n->output()->setType(val.type());
+  } else if (val.isCustomClass()) {
+    n->ival_(attr::value, val);
+    n->output()->setType(val.type());
   } else {
     n->destroy();
     return c10::nullopt;
