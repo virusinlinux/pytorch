@@ -6,6 +6,10 @@
 #include <torch/csrc/jit/frontend/source_range.h>
 #include <unordered_map>
 
+namespace c10 {
+struct ClassType;
+}
+
 namespace torch {
 namespace jit {
 
@@ -50,6 +54,33 @@ struct TORCH_API Scope : public c10::intrusive_ptr_target {
 
 struct Function;
 struct InlinedCallStack;
+using ClassTypePtr = std::shared_ptr<c10::ClassType>;
+
+/**
+ * ModuleInstanceInfo is a structure to include the module type and instance
+ * name. It also provide public methods to get the pointer to module type and
+ * instance name.
+ *
+ * This structure is mainly used as a private member in InlinedCallStack, such
+ * that one can follow the callstack to find the relevant module hierarchy.
+ */
+struct ModuleInstanceInfo {
+ private:
+  ClassTypePtr module_type_{nullptr};
+  std::string instance_name_;
+
+ public:
+  ModuleInstanceInfo(ClassTypePtr module_type, std::string instance_name);
+  ClassTypePtr class_type() {
+    return module_type_;
+  }
+  ClassTypePtr class_type() const {
+    return module_type_;
+  }
+  std::string instance_name() const {
+    return instance_name_;
+  }
+};
 
 /**
  * InlinedCallStack is an element in a list representing callstack of functions
@@ -88,16 +119,29 @@ struct TORCH_API InlinedCallStack : public c10::intrusive_ptr_target {
   Function* fn_;
   SourceRange source_range_;
   InlinedCallStackPtr intrusive_from_this();
+  c10::optional<ModuleInstanceInfo> module_instance_info_;
 
  public:
   // Constructor for a leaf callstack node.
   InlinedCallStack(Function* fn, SourceRange source_range);
+
+  // Constructor for a leaf callstack node.
+  InlinedCallStack(
+      Function* fn,
+      SourceRange source_range,
+      c10::optional<ModuleInstanceInfo> module_instance_info);
 
   // Constructor for an inner callstack node.
   InlinedCallStack(
       InlinedCallStackPtr callee,
       Function* fn,
       SourceRange source_range);
+
+  InlinedCallStack(
+      InlinedCallStackPtr callee,
+      Function* fn,
+      SourceRange source_range,
+      c10::optional<ModuleInstanceInfo> module_instance_info);
 
   // Return next element in the callstack list.
   c10::optional<InlinedCallStackPtr> callee() const;
