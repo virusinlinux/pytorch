@@ -88,6 +88,17 @@ class C10_API Scalar {
 
   Scalar operator-() const;
 
+  template<typename T>
+  bool equal(T num) const {
+    if (isComplex()) {
+      return v.z == num;
+    } else if (isFloatingPoint()) {
+      return v.d == num;
+    } else {
+      return v.i == num;
+    }
+  }
+
   ScalarType type() const {
     if (isComplex()) {
       return ScalarType::ComplexDouble;
